@@ -1,4 +1,4 @@
-#wWchatGPT
+WchatGPT
 Flask+Docker部署的微信公众号机器人对接ChatGPT或fine-tuned OpenAI model on Azure
 模拟ChatGPT多轮对话中保持上下文
 
