@@ -11,3 +11,4 @@ Flask+Docker部署的微信公众号机器人对接ChatGPT或fine-tuned OpenAI m
 - 并根据自己账号更改里面的key
 
 
+
