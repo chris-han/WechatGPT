@@ -1,0 +1,8 @@
+{
+    "Codegeex.DisabledFor": {
+        "": false,
+        "python": false,
+        "dockerfile": false,
+        "jsonc": false
+    }
+}
