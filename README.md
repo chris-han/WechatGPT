@@ -1,5 +1,5 @@
 # WechatGPT
-
+![Alt Text](./media/wechatgpt.png)
 ## 目标
 
 Flask+Docker 部署的微信公众号机器人对接 ChatGPT 或 fine-tuned OpenAI model on Azure
