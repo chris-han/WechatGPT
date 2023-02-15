@@ -49,6 +49,7 @@ def text_response(message,session):
     elif userinput in ["bye", "quit", "exit", "聊点别的"]:
         answer = "Bye!"
         sessionState = []
+        session['state'] = sessionState
     else:
         answer = openai_create(prompt)
         sessionState.append([userinput, answer])
