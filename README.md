@@ -6,15 +6,15 @@ Flask+Docker 部署的微信公众号机器人对接 ChatGPT 或 fine-tuned Open
 模拟 ChatGPT 多轮对话中保持上下文
 欢迎小伙伴贡献代码
 
-- main.py 入口
-- bot.py 负责对接 API
+- main.py #入口
+- bot.py #负责对接API
 
 ## 运行前
 
 - 将文件 config template.py 改名为 config.py
 - 并根据自己账号更改里面的 key
 
-## Azure OpanAI服务配置
+## Azure OpenAI服务配置
 如果调用Azure上的OpenAIAPI，需要修改config.py上的几个参数，其中
 - azure_openai_key 和 api_base
 
