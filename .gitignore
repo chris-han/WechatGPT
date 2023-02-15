@@ -12,3 +12,5 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 config.py
+SPA.html
+__pycache__/config.cpython-37.pyc
