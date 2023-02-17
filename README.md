@@ -39,9 +39,9 @@ Copy Azure Web App & Paste 到微信公众号后台的“服务器配置” 里
 
 ## Change Log
 
-- TDOO测试few-shot方式定制公众号应答 few-shot.json
+- few-shot方式定制公众号应答 few-shot.json
     + 定制欢迎词 ✔️
-- 定制菜单项
+- TDOO自然对话式公众号文章交互
     + 往期文章🚧
     + 相关文章🚧
 

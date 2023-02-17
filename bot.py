@@ -48,17 +48,19 @@ def text_response(message,session):
     print ('prompt: '+ userinput)
     answer=''
 
-    if userinput in ["bye", "quit", "exit", "聊点别的"]:
-        answer = "Bye!"
-        sessionState = []
-        session['state'] = sessionState
-    else:
+    try:
         output = openai_create(prompt)
+        if not output.lower().startswith('{"i":'):
+            output = '{"i":"na","a":"' + output + '"}'
         outputj = json.loads(output)
         intention = outputj['i']
         answer = outputj['a']
         if intention =='greeting':
             answer=answer
+        elif intention == 'reset':
+            answer=answer
+            sessionState = []
+            session.pop('state',None)
         elif intention == 'archive':
             answer = "您查询的'往期文章'功能正在建设中🚧预计明天上线"
         elif intention =='relevant':
@@ -67,7 +69,9 @@ def text_response(message,session):
             sessionState.append([userinput, answer])
             #print("sessionState1:" + sessionState.__str__())
             session['state'] = sessionState
-
+    except Exception as e:
+        # handle the exception
+        print(f"Opps: {e}")
 
     print ('answer: '+ answer)
     return answer
