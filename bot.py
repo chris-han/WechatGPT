@@ -1,3 +1,4 @@
+import json
 from werobot import WeRoBot
 import config as cfg
 import openai
@@ -36,25 +37,37 @@ def text_response(message,session):
     if 'state' in session:
         sessionState = session.get('state',[])
         print("sessionState:" + sessionState.__str__())
-
+    else:
+        with open('fewshot.json', 'r', encoding='utf-8') as f:
+            # Load the JSON data into a Python object for few-shot greeting pairs training
+            sessionState = json.load(f)
     s = list(itertools.chain(*sessionState))
-    s.append(userinput)
+    s.append(userinput+'\n') #add a space to inexplicitly end the user prompt
     prompt = ' '.join(s)
-
+    prompt = 'extract the intention and object from the message and answer based on it. '+ prompt
     print ('prompt: '+ userinput)
     answer=''
 
-    if userinput in ["hi", "hello", "你好", "您好"]:
-        answer = "欢迎来到系统之美，ChatGPT正在为您服务"
-    elif userinput in ["bye", "quit", "exit", "聊点别的"]:
+    if userinput in ["bye", "quit", "exit", "聊点别的"]:
         answer = "Bye!"
         sessionState = []
         session['state'] = sessionState
     else:
-        answer = openai_create(prompt)
-        sessionState.append([userinput, answer])
-        #print("sessionState1:" + sessionState.__str__())
-        session['state'] = sessionState
+        output = openai_create(prompt)
+        outputj = json.loads(output)
+        intention = outputj['i']
+        answer = outputj['a']
+        if intention =='greeting':
+            answer=answer
+        elif intention == 'archive':
+            answer = "您查询的'往期文章'功能正在建设中🚧预计明天上线"
+        elif intention =='relevant':
+            answer = "您查询的'相关文章'功能正在建设中🚧预计明天上线"
+        else:
+            sessionState.append([userinput, answer])
+            #print("sessionState1:" + sessionState.__str__())
+            session['state'] = sessionState
+
 
     print ('answer: '+ answer)
     return answer

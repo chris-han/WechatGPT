@@ -36,3 +36,12 @@ Flask+Docker 部署的微信公众号机器人对接 ChatGPT 或 fine-tuned Open
 Copy Azure Web App & Paste 到微信公众号后台的“服务器配置” 里
 
 ![Alt Text](./media/wechat_config.png)
+
+## Change Log
+
+- TDOO测试few-shot方式定制公众号应答 few-shot.json
+    + 定制欢迎词 ✔️
+- 定制菜单项
+    + 往期文章🚧
+    + 相关文章🚧
+
