@@ -22,12 +22,14 @@ Jinja2==3.1.2
 MarkupSafe==2.1.2
 multidict==6.0.4
 openai==0.26.5
+prettytable==3.6.0
 pycparser==2.21
 requests==2.28.2
 robot==20071211
 tqdm==4.64.1
 typing_extensions==4.4.0
 urllib3==1.26.14
+wcwidth==0.2.6
 Werkzeug==2.2.2
 WeRoBot==1.13.1
 xmltodict==0.13.0

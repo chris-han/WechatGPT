@@ -14,3 +14,11 @@ pip-selfcheck.json
 config.py
 SPA.html
 .gitignore
+venv/robot/templates/robot/base.html
+venv/robot/templates/robot/login.html
+venv/robot/templates/robot/notify.txt
+venv/robot/templates/robot/request_list.html
+venv/robot/templates/robot/request_new.html
+venv/robot/templates/robot/request_view.html
+venv/robot/templates/robot/request.txt
+testStyle.py
