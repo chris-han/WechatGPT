@@ -4,7 +4,11 @@ import config as cfg
 import openai
 import itertools
 #import re
-import prettytable
+#import prettytable
+#from transformers import GPT2TokenizerFast
+import asyncio
+import time
+import aiohttp
 
 mybot = WeRoBot(token=cfg.token)
 mybot.config["APP_ID"] = cfg.appid
@@ -38,13 +42,34 @@ def text_response(message,session):
     sessionState = []
     if 'state' in session:
         sessionState = session.get('state',[])
-        print("sessionState:" + sessionState.__str__())
+        sessionState_str = sessionState.__str__()
+        print("sessionState:", sessionState_str)
+        
+        
+        tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+        encoded_tokens = tokenizer.encode(sessionState_str+userinput)
+        # Calculate the number of tokens
+        num_tokens = len(encoded_tokens)
+
+        # Print the number of tokens
+        print("Number of tokens:", num_tokens)
+
+        #This model's maximum context length is 4097 tokens
+        #GPT-2 compression ratio of around 30% to 40%
+        #num_tokens = len(sessionState_str)
+        
+        if num_tokens>=2048:
+            answer = '不好意思，我的短期记忆不够用了。您重新提示前文一下吧？'
+            session.pop('state',None)
+            return answer
+        #decoded_text = tokenizer.decode(encoded_tokens)
+
     else:
         with open('fewshot.json', 'r', encoding='utf-8') as f:
             # Load the JSON data into a Python object for few-shot greeting pairs training
             sessionState = json.load(f)
     s = list(itertools.chain(*sessionState))
-    s.append(userinput+'\n') #add a space to inexplicitly end the user prompt
+    s.append(userinput+'\n') #add a linebreak to inexplicitly end the user prompt
     prompt = ' '.join(s)
     prompt = 'extract the intention and object from the message and answer based on it. '+ prompt
     print ('prompt: '+ userinput)
@@ -62,9 +87,9 @@ def text_response(message,session):
         intention = outputj['i']
         answer = outputj['a']
         if intention =='greeting':
-            answer=answer or 'Ok, 那聊啥呢？'
+            answer=answer or 'Hi'
         elif intention == 'reset':
-            answer=answer
+            answer=answer or 'Ok, 那聊啥呢？'
             sessionState = []
             session.pop('state',None)
         elif intention == 'archive':
@@ -90,7 +115,7 @@ def text_response(message,session):
         # handle the exception
         print(f"Opps: {e}")
 
-    print (answer)
+    print ('answer: ', answer)
     return answer
 
 #conver markdown table to ascii
@@ -109,7 +134,7 @@ def markdown2ascii_table(markdown_str:str):
 
     # print(rows)
     header_row = rows[header_row_number].strip().split("|")[1:-1]
-    print(header_row)
+    print('header_row', header_row)
     # Remove any unnecessary whitespace characters from the header row
     headers = [h.strip() for h in header_row]
     # print(headers)
@@ -124,14 +149,14 @@ def markdown2ascii_table(markdown_str:str):
     if '|' in alignment_row_str and '-' in alignment_row_str:
     # Create a list of alignment strings based on the Markdown alignment row
         alignment_row = alignment_row_str.split("|")[1:-1]
-        print (alignment_row)
+        print ('alignment_row', alignment_row)
         alignments = [        
             "l" if alignment.startswith(":") and alignment.endswith("-") else
             "r" if alignment.startswith("-") and alignment.endswith(":") else
             "c"
             for alignment in alignment_row
         ]   
-        print (alignments)
+        print ('alignments', alignments)
         data_start_row_number=alignment_row_number+1
         #table.align = alignments
 
@@ -157,7 +182,7 @@ def markdown2ascii_table(markdown_str:str):
     # Set the table style
     table.set_style(prettytable.SINGLE_BORDER)
     table_string = table.get_string()
-    print(table_string)
+    print('table_string', table_string)
     return table_string
 
 #defining the conversation function
@@ -178,6 +203,27 @@ def openai_create(prompt):
     # Set the presence penalty to 0.5 to reduce the relevance score of documents that do not contain the search terms at all
     presence_penalty = 0.5,
     #stop = '\n' #this will result in missing reply when leading with '\n'
+    n=1,
     )
 
     return response.choices[0].text#.replace('\n', '').replace(' .', '.').strip()
+
+async def call_api_with_timeout():
+    # Start a timer for 5 seconds
+    start_time = time.monotonic()
+    timeout = 5
+    
+    # Make async call to API
+    try:
+        result = await asyncio.wait_for(make_api_call(), timeout=timeout)
+        return result
+    except asyncio.TimeoutError:
+        # Return 'success' if API call times out
+        return 'success'
+
+async def make_api_call():
+    # Make async call to API at http://www.abc.com
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://www.abc.com') as response:
+            result = await response.text()
+    return result
