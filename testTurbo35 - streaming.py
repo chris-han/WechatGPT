@@ -27,7 +27,7 @@ print(system_message)
 
 
 #Define helper functions
-def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
+def num_tokens_from_messages(messages, model="gpt-3.5-turbo"):
     encoding = tiktoken.encoding_for_model(model)
     num_tokens = 0
     for message in messages:
@@ -78,6 +78,7 @@ def print_conversation(response):
     start_time = time.time()
     delay_time = 0.01 #  faster
     answer =''
+    full_content = ''
     for event in response: 
     # STREAM THE ANSWER
         #print(f"[{event['role'].upper()}]")
@@ -87,8 +88,10 @@ def print_conversation(response):
         event_time = time.time() - start_time  # CALCULATE TIME DELAY BY THE EVENT
         event_text = event['choices'][0]['delta'] # EVENT DELTA RESPONSE
         answer = event_text.get('content', '') # RETRIEVE CONTENT
+        full_content += answer
         time.sleep(delay_time)
     print('')  # End of the line
+    return full_content
         #print(f"[{event['name']}
 
 while user_message not in ["quit", "exit"]:
@@ -99,17 +102,20 @@ while user_message not in ["quit", "exit"]:
 
     user_message = input("🔥One more try?🔥")
     messages.append({"role": "user", "content": user_message})    
+    print(f"current msg: {messages}")
     token_count = num_tokens_from_messages(messages)
+    print(f"debug: 104 ok")
+
     if token_count>prompt_max_tokens:
         messages.pop(0)
 
     #print(f"Token count3: {token_count}")
 
-    response = send_message(messages, engine_name, max_response_tokens)
-    messages.append({"role": "assistant", "content": response})
+    response = send_message(messages, engine_name, max_response_tokens)    
     prompt_max_tokens-= token_count    # reduce the prompt length as needed.
     #print(f"prompt_max_tokens: {prompt_max_tokens}")
-    print_conversation(response)
+    full_content= print_conversation(response)
+    messages.append({"role": "assistant", "content": full_content})
     
-    #print(f"Token count4: {token_count}")
+    print(f"messages: {messages}")
     

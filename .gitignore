@@ -22,3 +22,6 @@ venv/robot/templates/robot/request_new.html
 venv/robot/templates/robot/request_view.html
 venv/robot/templates/robot/request.txt
 testStyle.py
+testTurbo35 - streaming.py
+__pycache__/config.cpython-310.pyc
+.gitignore
